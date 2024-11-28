@@ -1,0 +1,18 @@
+[
+  {
+    "id": "CPS001",
+    "protocolo": "MQTT",
+    "status": "Ativo",
+    "localizacao": "Linha1",
+    "tipo": "Sensor",
+    "velocidade": 100
+  },
+  {
+    "id": "CPS003",
+    "status": "Ativo",
+    "localizacao": "Linha1",
+    "protocolo": "HTTPS",
+    "tipo": "Atuador",
+    "velocidade": 120
+  }
+]
