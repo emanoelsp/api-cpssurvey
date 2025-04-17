@@ -8,7 +8,7 @@ import path from 'path'
 export async function GET() {
   try {
     // Obter todos os documentos da coleção 'CPS-SURVEY'
-    const querySnapshot = await getDocs(collection(firestore, 'CPS-SURVEY'));
+    const querySnapshot = await getDocs(collection(firestore, 'cps-catalog'));
     const cpsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
     const dataDir = path.join(process.cwd(), 'data')
