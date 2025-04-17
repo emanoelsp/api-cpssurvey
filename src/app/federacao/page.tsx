@@ -2,23 +2,9 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { initializeApp } from "firebase/app"
-import { getFirestore, collection, addDoc } from "firebase/firestore"
+import { collection, addDoc } from "firebase/firestore"
 import { Database, Upload, Search, X } from "lucide-react"
-
-// Configuração do Firebase (substitua com suas credenciais)
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-}
-
-// Inicializa Firebase
-const app = initializeApp(firebaseConfig)
-const db = getFirestore(app)
+import { firestore } from "@/lib/firebaseConfig"
 
 // Tipos de API
 const API_TYPES = ["REST", "GraphQL", "SOAP", "OPC-UA", "MQTT", "WebSocket", "gRPC", "Outro"]
@@ -85,7 +71,7 @@ export default function FederacaoPage() {
   const realizarExchange = async () => {
     try {
       // Adiciona entrada no Firebase
-      await addDoc(collection(db, "catalogoRotas"), {
+      await addDoc(collection(firestore, "catalogoRotas"), {
         nome: apiName,
         tipo: apiType,
         descricao: apiDescription,

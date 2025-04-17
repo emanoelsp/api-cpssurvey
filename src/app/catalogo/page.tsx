@@ -2,23 +2,10 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { initializeApp } from "firebase/app"
-import { getFirestore, collection, getDocs } from "firebase/firestore"
+import { collection, getDocs } from "firebase/firestore"
 import { ChevronDown, ChevronUp, X, RefreshCw } from "lucide-react"
-
-// Configuração do Firebase
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-}
-
-// Inicializa Firebase
-const app = initializeApp(firebaseConfig)
-const db = getFirestore(app)
+import { firestore } from "@/lib/firebaseConfig"
+import firebase from "firebase/compat/app"
 
 interface RotaAPI {
   id: string
@@ -26,14 +13,15 @@ interface RotaAPI {
   tipo: string
   descricao: string
   url: string
-  dataAdicionado: any
+  dataAdicionado: firebase.firestore.Timestamp | Date | number // Replace any with specific types
   tipoConexao: string
   dadosObtidos: number
 }
 
+// Fix the LeituraAPI interface by replacing 'any' with a more specific type
 interface LeituraAPI {
   timestamp: Date
-  dados: any
+  dados: Record<string, unknown> // Replace any with Record<string, unknown>
 }
 
 export default function CatalogoPage() {
@@ -52,7 +40,7 @@ export default function CatalogoPage() {
   useEffect(() => {
     const fetchRotas = async () => {
       try {
-        const rotasCollection = collection(db, "catalogoRotas")
+        const rotasCollection = collection(firestore, "catalogoRotas")
         const rotasSnapshot = await getDocs(rotasCollection)
         const rotasList = rotasSnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -80,11 +68,13 @@ export default function CatalogoPage() {
     }
   }, [])
 
-  const formatDate = (timestamp: any) => {
+  const formatDate = (timestamp: firebase.firestore.Timestamp | Date | number) => {
     if (!timestamp) return "Data desconhecida"
-
+  
     try {
-      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp)
+      const date = timestamp instanceof firebase.firestore.Timestamp 
+        ? timestamp.toDate() 
+        : new Date(timestamp)
       return date.toLocaleDateString("pt-BR", {
         day: "2-digit",
         month: "2-digit",
@@ -92,7 +82,8 @@ export default function CatalogoPage() {
         hour: "2-digit",
         minute: "2-digit",
       })
-    } catch (e) {
+    } catch (_) {
+      // Replace unused variable 'e' with underscore
       return "Data inválida"
     }
   }
